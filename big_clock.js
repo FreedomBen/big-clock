@@ -5,8 +5,9 @@
 
 imports.gi.versions.Gdk = "3.0";
 imports.gi.versions.Gtk = "3.0";
+imports.gi.versions.Pango = "1.0";
 
-const { Gdk, Gio, GLib, Gtk, GObject } = imports.gi;
+const { Gdk, Gio, GLib, Gtk, GObject, Pango } = imports.gi;
 
 const BigClockWindow = GObject.registerClass(
 class BigClockWindow extends Gtk.ApplicationWindow {
@@ -16,7 +17,7 @@ class BigClockWindow extends Gtk.ApplicationWindow {
             title: "Big Clock",
             default_width: 480,
             default_height: 200,
-            resizable: false,
+            resizable: true,
         });
 
         this._label = new Gtk.Label({
@@ -32,8 +33,14 @@ class BigClockWindow extends Gtk.ApplicationWindow {
         this.add(this._label);
         this.show_all();
 
+        this._currentFontSize = 0;
+        this.connect("size-allocate", (_widget, allocation) =>
+            this._applyResponsiveFont(allocation.height)
+        );
+
         this._setupCss();
         this._updateTime();
+        this._applyResponsiveFont(this.get_allocated_height() || 200);
         GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 1, () => this._updateTime());
     }
 
@@ -44,7 +51,6 @@ class BigClockWindow extends Gtk.ApplicationWindow {
             }
 
             label#clock-label {
-                font-size: 96px;
                 font-weight: bold;
                 color: #00ffcc;
             }
@@ -66,6 +72,17 @@ class BigClockWindow extends Gtk.ApplicationWindow {
         const dt = GLib.DateTime.new_now_local();
         this._label.set_label(dt.format("%H:%M:%S"));
         return GLib.SOURCE_CONTINUE;
+    }
+
+    _applyResponsiveFont(height) {
+        const usableHeight = Math.max(height, 1);
+        const targetSize = Math.max(64, Math.floor(usableHeight * 0.45));
+        if (targetSize === this._currentFontSize) {
+            return;
+        }
+        this._currentFontSize = targetSize;
+        const desc = Pango.FontDescription.from_string(`Monospace ${targetSize}`);
+        this._label.override_font(desc);
     }
 });
 
