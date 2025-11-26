@@ -2,6 +2,8 @@
 
 Simple GTK 3 application implemented with GJS that renders a large digital clock.
 
+Official site: https://bigclock.benporter.dev
+
 ## Prerequisites
 
 - GJS (e.g. `sudo apt install gjs` on Debian/Ubuntu)

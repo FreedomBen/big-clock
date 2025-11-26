@@ -90,7 +90,7 @@ const BigClock = GObject.registerClass(
 class BigClock extends Gtk.Application {
     constructor() {
         super({
-            application_id: "com.example.BigClock",
+            application_id: "dev.benporter.BigClock",
             flags: Gio.ApplicationFlags.FLAGS_NONE,
         });
     }
