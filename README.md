@@ -14,3 +14,7 @@ Official site: https://bigclock.benporter.dev
 ```bash
 gjs big_clock.js
 ```
+
+## Usage
+
+- Right-click the clock to toggle between transparent and solid backgrounds.
